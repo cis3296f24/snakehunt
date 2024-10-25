@@ -6,6 +6,9 @@ from gamedata import *
 import comm
 from game import *
 
+color = 1
+speed = 1
+
 class Server():
     """
     Game server
@@ -30,6 +33,7 @@ class Server():
     Methods
     -------
     start()
+    game_options()
     listen()
     receive_name(player)
     receive_input(player)
@@ -38,9 +42,55 @@ class Server():
     on_exit()
     listen_exit()
     """
+    
+    """Modifies specific game values, such as Snake color, speed, and size of the board"""
+    def game_options(self):
+        #Asks for Color First
+        while True:
+            print("What color would you like the snake to be? Enter the Corresponding Number:")
+            print("Options:")
+            print("1. Default")
+            print("2. Red")
+            print("3. Green")
+            print("4. Blue")
+            print("5. Yellow")
+            print("6. Purple")
+            print("7. Brown")
+            color = input("Desired Color: ")
+            
+            #Input Validation for color by both datatype and value range
+            try:
+                color = int(color)
+            except:
+                print("Please Enter a Valid Value")
+                continue
+            
+            if color >= 1 and color <= 7:
+                break
+            else:
+                print("Please Enter a Valid Value")
+                
+        #Ask for Speed of Snake
+        while True:
+            print("What would you like the Speed to be multiplied by. Your can input any non-zero, non-negative decimal up to 4.0:")
+            speed = input("Desired Speed: ")
+            
+            #Input Validation for speed by both datatype and value range
+            try:
+                speed = float(speed)
+            except:
+                print("Please Enter a Valid Value")
+                continue
+            
+            if speed > 0 and speed <= 4.0:
+                break
+            else:
+                print("Please Enter a Valid Value")
+    
     def __init__(self):
         """Initialize server."""
-        self.game = Game(self)
+        self.game_options()
+        self.game = Game(self, color, speed)
         self.host = socket.gethostbyname(socket.gethostname())
         self.port = 5555
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -63,7 +113,7 @@ class Server():
         Thread(target=self.game.game_loop).start()
         print("Server started.")
         print(f"Server IP: {self.host} Server Port: {self.port}")
-
+                
     def listen(self):
         """
         Listen for connections, create a thread for each connected client.

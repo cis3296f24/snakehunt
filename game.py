@@ -8,10 +8,13 @@ from socket import SHUT_RDWR
 
 BOARD = (1000,1000)
 CELL = 10
-SPEED = 10
+SPEED = CELL
 COLS = BOARD[0]/CELL
 ROWS = BOARD[1]/CELL
 MAX_NAME_LENGTH = 32
+
+color_key = 1
+color_map = {0: 0, 1: (0, 255, 0), 2: (255, 0, 0), 3: (0, 255, 0), 4: (0, 0, 255), 5: (255, 255, 0), 6: (128, 0, 128), 7: (165,42,42)}
 
 class Player():
     """
@@ -154,7 +157,10 @@ class Snake():
     def __init__(self, position, length, xdir, ydir, bounds):
         """Create snake."""
         self.bounds = bounds
-        self.color = RandomPellets.val_1[0]
+        if color_key == 1:
+            self.color = RandomPellets.val_1[0]
+        else:
+            self.color = color_map.get(color_key)
         self.body = []
         self.turns = {}
         if length < 1: length = 1
@@ -287,6 +293,9 @@ class Snake():
         xdir = previous.xdir
         ydir = previous.ydir
         width = previous.width
+        
+        if color_key > 1:
+            color = color_map.get(color_key)
         
         for i in range(amount):
             if xdir == 1 and ydir == 0:
@@ -715,7 +724,11 @@ class Game():
     game_loop()
     """
     
-    def __init__(self, server):
+    def __init__(self, server, color, speed):
+        #Receiving and modifying speed and color received from input on server side
+        SPEED = 10 * speed
+        color_key = color
+        
         """Initialize game."""
         self.server = server or None
         self.players = []
