@@ -13,6 +13,9 @@ SPEED = CELL
 COLS = BOARD[0]/CELL
 ROWS = BOARD[1]/CELL
 
+color_key = 1
+color_map = {0: 0, 1: (0, 255, 0), 2: (255, 0, 0), 3: (0, 255, 0), 4: (0, 0, 255), 5: (255, 255, 0), 6: (128, 0, 128), 7: (165,42,42)}
+
 class Player():
     def __init__(self, name, snake):
         self.name = name
@@ -69,13 +72,13 @@ class BodyPart():
         self.position = (self.position[0] + SPEED * self.xdir, self.position[1] + SPEED * self.ydir)
 
     def render(self, surface):
-        pygame.draw.rect(surface, self.color, (self.position[0], self.position[1], self.width - 2, self.width - 2));
+        pygame.draw.rect(surface, self.color, (self.position[0], self.position[1], self.width - 2, self.width - 2))
 
 class Snake():
     def __init__(self, position, length, xdir, ydir, field_dimensions, world_dimensions):
         #(west,north,east,south) points
         self.bounds = {"west":world_dimensions[0]/4, "north":world_dimensions[1]/4, "east":3*world_dimensions[0]/4+field_dimensions[0], "south":3*world_dimensions[1]/4+field_dimensions[1]}
-        self.color = (0, 255, 0)
+        self.color = color_map.get(color_key)
         self.body = []
         self.turns = {}
         self.position = position
@@ -303,7 +306,11 @@ class RandomPellets():
             pellet.render(surface)
 
 class Game():
-    def __init__(self):
+    def __init__(self, color, speed):
+        #Receiving and modifying speed and color received from input on server side
+        SPEED = speed
+        color_key = color
+        
         pygame.init()
         self.field_dimensions = BOARD
         self.world_dimensions = BEYOND_BOARD
