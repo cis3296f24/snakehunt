@@ -118,7 +118,7 @@ class BodyPart():
         ------
         None
         """
-        self.position = (self.position[0] + self.game.speed * self.xdir, self.position[1] + self.game.speed * self.ydir)    
+        self.position = (self.position[0] + SPEED * self.xdir, self.position[1] + SPEED * self.ydir)    
     
 class Snake():
     """
@@ -198,13 +198,13 @@ class Snake():
         for i in range(self.length):
             self.body.append(BodyPart((posx, posy), xdir, ydir, self.color, self.game))
             if xdir == 1:
-                posx -= CELL
+                posx -= SPEED
             elif xdir == -1:
-                posx += CELL
+                posx += SPEED
             elif ydir == 1:
-                posy -= CELL
+                posy -= SPEED
             else:
-                posy += CELL
+                posy += SPEED
         self.head = self.body[0]
 
     def reset(self, position):
@@ -528,6 +528,9 @@ class RandomPellets():
 
     pellets (list):
         List of pellets
+        
+    Game (int):
+        Game that the pellet is a part of
     
     Methods
     -------
@@ -542,8 +545,11 @@ class RandomPellets():
     val_1 = ((150,255,150), 1)
     val_2 = ((150,150,255), 2)
     val_3 = ((255,150,150), 3)
+    val_4 = ((128, 0, 128), 5)
+    val_5 = ((255, 255, 0), 10)
 
-    def __init__(self, numPellets):
+    def __init__(self, numPellets, Game):
+        self.game = Game
         """Create RandomPellets object."""
         self.numPellets = numPellets
         self.availablePositions = self.setPositions()
@@ -557,13 +563,40 @@ class RandomPellets():
         ------
         A tuple containing the color and the value
         """
-        val = randint(0, 10)
-        if val == 10:
-            return self.val_3
-        elif val > 7:
-            return self.val_2
-        else:
-            return self.val_1
+        
+        #No Special Pellets
+        if self.game.pellet_type == 1:
+            val = randint(0, 10)
+            if val == 10:
+                return self.val_3
+            elif val > 7:
+                return self.val_2
+            else:
+                return self.val_1
+        #5 Point Pellets
+        elif self.game.pellet_type == 2:
+            val = randint(0, 12)
+            if val == 12:
+                return self.val_4
+            if val > 9:
+                return self.val_3
+            elif val > 7:
+                return self.val_2
+            else:
+                return self.val_1
+        #5 & 10 Point Pellets
+        elif self.game.pellet_type == 3:
+            val = randint(0, 13)
+            if val == 13:
+                return self.val_5
+            elif val > 11:
+                return self.val_4
+            if val > 9:
+                return self.val_3
+            elif val > 7:
+                return self.val_2
+            else:
+                return self.val_1
         
     def genPellets(self):
         """
@@ -720,8 +753,8 @@ class Game():
     bounds (object):
         Left, right, up and down bounds of the playing field
         
-    speed (int):
-        speed of snake
+    pellet_type (int):
+        Determines if the 5 and 10 point pellets will appear
         
     color_key (int):
         key for RGB combination that will give desired color
@@ -737,16 +770,15 @@ class Game():
     game_loop()
     """
     
-    def __init__(self, server, color, speed):
+    def __init__(self, server, color, pellet):
         #Receiving speed and color from input on server side
         self.color_key = color
-        self.speed = 10 * speed
-        
+        self.pellet_type = pellet
         """Initialize game."""
         self.server = server or None
         self.players = []
         self.camera = Camera(500, 500)
-        self.random_pellets = RandomPellets(25)
+        self.random_pellets = RandomPellets(25, self)
         self.running = True
         self.bounds = {
             'left': 0,

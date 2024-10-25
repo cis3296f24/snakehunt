@@ -67,24 +67,27 @@ class Server():
             else:
                 print("Please Enter a Valid Value")
                 
-        #Ask for Speed of Snake
+        #Ask for Bonus Pellet Conditions
         while True:
-            print("What would you like the Speed to be multiplied by. Your can input any non-zero, non-negative decimal up to 2.0:")
-            speed = input("Desired Speed: ")
+            print("Would you like to play with Bonus Pellets? Enter the Corresponding Number:")
+            print("1. None")
+            print("2. 5 Point Pellet")
+            print("3. 5 & 10 Point Pellets")
+            pellet = input("Your Choice:")
             
             #Input Validation for speed by both datatype and value range
             try:
-                speed = float(speed)
+                pellet = int(pellet)
             except:
                 print("Please Enter a Valid Value")
                 continue
             
-            if speed > 0 and speed <= 2.0:
-                break
-            else:
+            if pellet < 1 or pellet > 3:
                 print("Please Enter a Valid Value")
+            else:
+                break
                 
-        return [color, speed]
+        return [color, pellet]
     
     def __init__(self):
         """Initialize server."""
