@@ -12,6 +12,8 @@ import sys
 
 from gamedata import *
 import comm
+import requests
+import urllib3
 
 root = Tk()
 
@@ -185,6 +187,29 @@ class PauseMenu:
 
         root.destroy()
 
+    def api_call(self):
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        auth_url = "https://www.strava.com/oauth/token"
+        activities_url = "https://www.strava.com/api/v3/athlete/activities"
+
+        payload = {
+            'client_id': "136744",
+            'client_secret': '80bb891bf2410b6426a96b97827c628f5fe6081f',
+            'refresh_token': 'c308c31f688e9c60a3eeef2de44cbcb3e5e4811d',
+            'grant_type': "refresh_token",
+            'f': "json"
+        }
+
+        res = requests.post(auth_url, data=payload, verify=False)
+        access_token = res.json()['access_token']
+    
+        header = {'Authorization': 'Bearer ' + access_token}
+        param = {'per_page': 200, 'page': 1}
+        my_dataset = requests.get(activities_url, headers=header, params=param).json()
+        distance_meters = my_dataset[0]['distance']
+        distance_miles = distance_meters / 1609.34
+        return distance_miles   
+
     def populate(self):
         """
         Create the menu and its widgets
@@ -209,6 +234,18 @@ class PauseMenu:
         buttons_frame.pack(pady=5)
         ttk.Button(buttons_frame, text='Play', command=self.send_name).pack(side=tkinter.LEFT, padx=3)
         ttk.Button(buttons_frame, text='Quit', command=self.quit).pack(side=tkinter.LEFT, padx=3)
+
+        """
+        api call that shows the most recent milage I ran.
+        Must increase game window size to see
+        """
+        frame2 = ttk.Frame(root, padding=10)
+        frame2.pack()
+        api_text = f"This is the api call that shows the most recent number of miles I ran: {self.api_call()}"
+        api_frame = ttk.Frame(frame2)
+        api_frame.pack()
+        ttk.Label(api_frame, text = api_text).pack(side=tkinter.BOTTOM)
+
 
 class Game():
     """
