@@ -65,8 +65,6 @@ class Client():
         """Initialize a TCP socket"""
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.addr = None
-        color = 1
-        speed = 1
         
     def input_addr(self):
         """Get user input for IP and port. Store in a tuple."""

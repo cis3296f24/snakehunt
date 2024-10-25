@@ -13,7 +13,6 @@ COLS = BOARD[0]/CELL
 ROWS = BOARD[1]/CELL
 MAX_NAME_LENGTH = 32
 
-color_key = 1
 color_map = {0: 0, 1: (0, 255, 0), 2: (255, 0, 0), 3: (0, 255, 0), 4: (0, 0, 255), 5: (255, 255, 0), 6: (128, 0, 128), 7: (165,42,42)}
 
 class Player():
@@ -82,11 +81,12 @@ class BodyPart():
     """
 
     width = CELL
-    def __init__(self, position, xdir, ydir, color):
+    def __init__(self, position, xdir, ydir, color, Game):
+        self.game = Game
         """Create body part."""
         self.position = position
         self.xdir = xdir
-        self.ydir = ydir
+        self.ydir = ydir  
         self.color = color
 
     def set_direction(self, xdir, ydir):
@@ -115,7 +115,7 @@ class BodyPart():
         ------
         None
         """
-        self.position = (self.position[0] + SPEED * self.xdir, self.position[1] + SPEED * self.ydir)    
+        self.position = (self.position[0] + self.game.speed * self.xdir, self.position[1] + self.game.speed * self.ydir)    
     
 class Snake():
     """
@@ -154,13 +154,14 @@ class Snake():
 
     MAX_INVINCIBLE_LENGTH = 3
     INITIAL_LENGTH = 1
-    def __init__(self, position, length, xdir, ydir, bounds):
+    def __init__(self, position, length, xdir, ydir, bounds, Game):
+        self.game = Game
         """Create snake."""
         self.bounds = bounds
-        if color_key == 1:
+        if self.game.color_key == 1:
             self.color = RandomPellets.val_1[0]
         else:
-            self.color = color_map.get(color_key)
+            self.color = color_map.get(self.game.color_key)
         self.body = []
         self.turns = {}
         if length < 1: length = 1
@@ -189,15 +190,15 @@ class Snake():
         posx = position[0]
         posy = position[1]
         for i in range(self.length):
-            self.body.append(BodyPart((posx, posy), xdir, ydir, self.color))
+            self.body.append(BodyPart((posx, posy), xdir, ydir, self.color, self.game))
             if xdir == 1:
-                posx -= SPEED
+                posx -= CELL
             elif xdir == -1:
-                posx += SPEED
+                posx += CELL
             elif ydir == 1:
-                posy -= SPEED
+                posy -= CELL
             else:
-                posy += SPEED
+                posy += CELL
         self.head = self.body[0]
 
     def reset(self, position):
@@ -294,18 +295,18 @@ class Snake():
         ydir = previous.ydir
         width = previous.width
         
-        if color_key > 1:
-            color = color_map.get(color_key)
+        if self.game.color_key > 1:
+            color = color_map.get(self.game.color_key)
         
         for i in range(amount):
             if xdir == 1 and ydir == 0:
-                self.body.append(BodyPart((previous.position[0]-(i+1)*width,previous.position[1]), xdir, ydir, color))
+                self.body.append(BodyPart((previous.position[0]-(i+1)*width,previous.position[1]), xdir, ydir, color, self.game))
             elif xdir == -1 and ydir == 0:
-                self.body.append(BodyPart((previous.position[0]+(i+1)*width,previous.position[1]), xdir, ydir, color))
+                self.body.append(BodyPart((previous.position[0]+(i+1)*width,previous.position[1]), xdir, ydir, color, self.game))
             elif xdir == 0 and ydir == 1:
-                self.body.append(BodyPart((previous.position[0],previous.position[1]-(i+1)*width), xdir, ydir, color))
+                self.body.append(BodyPart((previous.position[0],previous.position[1]-(i+1)*width), xdir, ydir, color, self.game))
             elif xdir == 0 and ydir == -1:
-                self.body.append(BodyPart((previous.position[0],previous.position[1]+(i+1)*width), xdir, ydir, color))
+                self.body.append(BodyPart((previous.position[0],previous.position[1]+(i+1)*width), xdir, ydir, color, self.game))
     
 
     def collides_self(self):
@@ -725,9 +726,9 @@ class Game():
     """
     
     def __init__(self, server, color, speed):
-        #Receiving and modifying speed and color received from input on server side
-        SPEED = 10 * speed
-        color_key = color
+        #Receiving speed and color from input on server side
+        self.color_key = color
+        self.speed = 10 * speed
         
         """Initialize game."""
         self.server = server or None

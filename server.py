@@ -6,9 +6,6 @@ from gamedata import *
 import comm
 from game import *
 
-color = 1
-speed = 1
-
 class Server():
     """
     Game server
@@ -72,7 +69,7 @@ class Server():
                 
         #Ask for Speed of Snake
         while True:
-            print("What would you like the Speed to be multiplied by. Your can input any non-zero, non-negative decimal up to 4.0:")
+            print("What would you like the Speed to be multiplied by. Your can input any non-zero, non-negative decimal up to 2.0:")
             speed = input("Desired Speed: ")
             
             #Input Validation for speed by both datatype and value range
@@ -82,15 +79,17 @@ class Server():
                 print("Please Enter a Valid Value")
                 continue
             
-            if speed > 0 and speed <= 4.0:
+            if speed > 0 and speed <= 2.0:
                 break
             else:
                 print("Please Enter a Valid Value")
+                
+        return [color, speed]
     
     def __init__(self):
         """Initialize server."""
-        self.game_options()
-        self.game = Game(self, color, speed)
+        game_rules = self.game_options()
+        self.game = Game(self, game_rules[0], game_rules[1])
         self.host = socket.gethostbyname(socket.gethostname())
         self.port = 5555
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -129,7 +128,7 @@ class Server():
             print("Connected to:", addr)
 
             position = self.game.get_random_position()
-            snake = Snake(position, Snake.INITIAL_LENGTH, 1, 0, self.game.bounds)
+            snake = Snake(position, Snake.INITIAL_LENGTH, 1, 0, self.game.bounds, self.game)
             player = Player(self.next_id, snake, sock)
             self.next_id = self.next_id + 1
 
