@@ -73,6 +73,9 @@ class BodyPart():
 
     color (tuple[int, int, int]):
         Values for red, green, and blue (RGB), respectively
+        
+    Game (game):
+        Game that the body part is inside of
 
     Methods
     -------
@@ -137,6 +140,9 @@ class Snake():
 
     length (int):
         Initial length of the snake
+    
+    Game (game):
+        Game that the snake is inside of
     
     Methods
     -------
@@ -713,6 +719,12 @@ class Game():
 
     bounds (object):
         Left, right, up and down bounds of the playing field
+        
+    speed (int):
+        speed of snake
+        
+    color_key (int):
+        key for RGB combination that will give desired color
     
     Methods
     -------
