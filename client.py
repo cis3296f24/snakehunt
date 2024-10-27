@@ -119,7 +119,7 @@ class PauseMenu:
     def __init__(self, game):
         """Create the menu"""
         #self.root = Tk()
-        root.geometry('275x125')
+        root.geometry('500x500')
         self.game = game
         self.current_name = StringVar()
         self.populate()
@@ -187,6 +187,51 @@ class PauseMenu:
 
         root.destroy()
 
+    def help_menu(self):
+        """
+        Display help screen with instructions and a Back button to return to the main menu.
+
+        Returns
+        -------
+        None
+        """
+        # Clear main menu widgets
+        for widget in root.winfo_children():
+            widget.destroy()
+
+        # Create a help frame
+        help_frame = ttk.Frame(root, padding=10)
+        help_frame.pack()
+
+        # Help text
+        help_text = (
+            "Welcome to the game!\n\n"
+            "Instructions:\n"
+            "1. Enter a display name and click 'Play' to start.\n"
+            "2. Use the Up/Down/Left/Right arrow keys to navigate the snake.\n"
+            "3. Use your computer's volume controls to turn the sound up or down.\n\n"
+            "Have fun!"
+        )
+        ttk.Label(help_frame, text=help_text, justify='left').pack(pady=10)
+
+        # Back button to return to the main menu
+        ttk.Button(help_frame, text="Back", command=self.main_menu).pack(pady=10)
+
+    def main_menu(self):
+        """
+        Restore the main menu screen.
+
+        Returns
+        -------
+        None
+        """
+        # Clear help screen widgets
+        for widget in root.winfo_children():
+            widget.destroy()
+
+        # Re-populate the main menu
+        self.populate()
+
     def api_call(self):
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         auth_url = "https://www.strava.com/oauth/token"
@@ -233,11 +278,12 @@ class PauseMenu:
         buttons_frame = ttk.Frame(frame)
         buttons_frame.pack(pady=5)
         ttk.Button(buttons_frame, text='Play', command=self.send_name).pack(side=tkinter.LEFT, padx=3)
+        ttk.Button(buttons_frame, text='Help', command=self.help_menu).pack(side=tkinter.LEFT, padx=3)
         ttk.Button(buttons_frame, text='Quit', command=self.quit).pack(side=tkinter.LEFT, padx=3)
+
 
         """
         api call that shows the most recent milage I ran.
-        Must increase game window size to see
         """
         frame2 = ttk.Frame(root, padding=10)
         frame2.pack()
