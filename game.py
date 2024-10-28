@@ -6,11 +6,8 @@ from pygame.time import Clock
 from gamedata import *
 from socket import SHUT_RDWR
 
-BOARD = (1000,1000)
 CELL = 10
 SPEED = CELL
-COLS = BOARD[0]/CELL
-ROWS = BOARD[1]/CELL
 MAX_NAME_LENGTH = 32
 
 color_map = {0: 0, 1: (0, 255, 0), 2: (255, 0, 0), 3: (0, 255, 0), 4: (0, 0, 255), 5: (255, 255, 0), 6: (128, 0, 128), 7: (165,42,42)}
@@ -392,7 +389,7 @@ class Snake():
         """
         remains = []
         for i in range(1, len(self.body), 2):
-            pel = Pellet(RandomPellets.val_1, is_remains=True)
+            pel = Pellet(RandomPellets.val_1, self.game.cols, self.game.rows, is_remains=True)
             pel.setPos(self.body[i].position[0], self.body[i].position[1])
             remains.append(pel)
         return remains
@@ -457,7 +454,9 @@ class Pellet():
     getPos()
     setPos()
     """
-    def __init__(self, color_val, is_remains=False):
+    def __init__(self, color_val, cols, rows, is_remains=False):
+        self.cols = cols
+        self.rows = rows
         """Create pellet object."""
         self.position = self.setRandomPos()
         self.color = color_val[0]
@@ -474,8 +473,8 @@ class Pellet():
         ------
         A tuple [int, int] representing the random position
         """
-        xpos = randint(1, COLS-1)*CELL
-        ypos = randint(1,ROWS-1)*CELL
+        xpos = randint(1, self.cols-1)*CELL
+        ypos = randint(1, self.rows-1)*CELL
         return (xpos, ypos)
 
     def getPos(self):
@@ -608,7 +607,7 @@ class RandomPellets():
         """
         pellets = []
         for i in range(self.numPellets):
-            pel = Pellet(self.setColor())
+            pel = Pellet(self.setColor(), self.game.cols, self.game.rows)
             pos = self.availablePositions.pop(randint(0,len(self.availablePositions)-1))
             pel.setPos(pos[0],pos[1])
             pellets.append(pel)
@@ -623,8 +622,8 @@ class RandomPellets():
         List of all possible positions
         """
         positions = []
-        for i in range(flr(ROWS)):
-            for j in range(flr(COLS)):
+        for i in range(flr(self.game.rows)):
+            for j in range(flr(self.game.cols)):
                 positions.append([i*CELL, j*CELL])
         return(positions)
     
@@ -658,7 +657,7 @@ class RandomPellets():
         self.pellets.remove(pel)
         pos = self.availablePositions.pop(randint(1,len(self.availablePositions)-1))
         color_val = self.setColor()
-        pel2 = Pellet(color_val)
+        pel2 = Pellet(color_val, self.game.cols, self.game.rows)
         pel2.setPos(pos[0], pos[1])
         self.availablePositions.append(pel.position)
         self.pellets.append(pel2)
@@ -770,22 +769,26 @@ class Game():
     game_loop()
     """
     
-    def __init__(self, server, color, pellet):
+    def __init__(self, server, color, pellet, user_bounds):
         #Receiving speed and color from input on server side
         self.color_key = color
         self.pellet_type = pellet
+        self.cols = user_bounds['right']//CELL
+        self.rows = user_bounds['down']//CELL
         """Initialize game."""
         self.server = server or None
         self.players = []
         self.camera = Camera(500, 500)
-        self.random_pellets = RandomPellets(25, self)
+        if user_bounds['right'] == 1000:
+            numPellets = 25
+        elif user_bounds['right'] == 2000:
+            numPellets = 50
+        elif user_bounds['right'] == 3000:
+            numPellets = 75
+        self.random_pellets = RandomPellets(numPellets, self)
         self.running = True
-        self.bounds = {
-            'left': 0,
-            'right': BOARD[0],
-            'up': 0,
-            'down': BOARD[1]
-        }
+        self.bounds = user_bounds
+
 
     def add_player(self, player):
         """
@@ -892,8 +895,8 @@ class Game():
         A tuple[int, int] containing the position
         """
         while True:
-            x_pos = randint(0, COLS - 1) * CELL
-            y_pos = randint(0, ROWS - 1) * CELL
+            x_pos = randint(0, self.cols - 1) * CELL
+            y_pos = randint(0, self.rows - 1) * CELL
             position = (x_pos, y_pos)
             for player in self.players:
                 if player.snake.collides_position(position):

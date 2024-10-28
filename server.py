@@ -86,13 +86,39 @@ class Server():
                 print("Please Enter a Valid Value")
             else:
                 break
+
+        #Ask for Board Size
+        while True:
+            print("What size would you like the board to be? Enter the Corresponding Number:")
+            print("1. Small (1000x1000)")
+            print("2. Medium (2000x2000)")
+            print("3. Large (3000x3000)")
+            board_size = input("Your Choice:")
+            bounds = None
+            #Input Validation for board size by both datatype and value range
+            try:
+                board_size = int(board_size)
+            except:
+                print("Please Enter a Valid Value")
+                continue
+            
+            if board_size < 1 or board_size > 4:
+                print("Please Enter a Valid Value")
+            else:
+                if board_size == 1:
+                    bounds = {'left': 0, 'right': 1000, 'up': 0, 'down': 1000}
+                elif board_size == 2:
+                    bounds = {'left': 0, 'right': 2000, 'up': 0, 'down': 2000}
+                elif board_size == 3:
+                    bounds = {'left': 0, 'right': 3000, 'up': 0, 'down': 3000}
+                break
                 
-        return [color, pellet]
+        return [color, pellet, bounds]
     
     def __init__(self):
         """Initialize server."""
         game_rules = self.game_options()
-        self.game = Game(self, game_rules[0], game_rules[1])
+        self.game = Game(self, game_rules[0], game_rules[1], game_rules[2])
         self.host = socket.gethostbyname(socket.gethostname())
         self.port = 5555
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -227,6 +253,12 @@ class Server():
         ------
         None
         """
+        # Send initial game data to player
+        initial_data = self.game.bounds
+        print(f"Game Bounds: {initial_data}")
+        initial_data_serialized = pickle.dumps(initial_data)
+        self.send_game_data(player, initial_data_serialized)
+
         if not self.receive_name(player): return
         self.game.add_player(player)
         self.receive_input(player)

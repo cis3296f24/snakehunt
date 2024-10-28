@@ -62,6 +62,7 @@ class Client():
     -------
     input_addr()
     connect()
+    get_board_size()
     """
     def __init__(self):
         """Initialize a TCP socket"""
@@ -88,6 +89,15 @@ class Client():
         except:
             print('Connection failed')
             return False
+        
+    def get_board_size(self):
+        try:
+            size_as_bytes = comm.receive_data(self.socket, comm.MSG_LEN)
+            length = comm.to_int(size_as_bytes)
+            game_data = pickle.loads(comm.receive_data(self.socket, length))
+            return game_data
+        except:
+            return None
 
 class PauseMenu:
     """
@@ -112,6 +122,8 @@ class PauseMenu:
     -------
     receive_name_feedback()
     send_name()
+    main_menu()
+    help_menu()
     quit()
     populate()
     """
@@ -198,7 +210,6 @@ class PauseMenu:
         # Clear main menu widgets
         for widget in root.winfo_children():
             widget.destroy()
-
         # Create a help frame
         help_frame = ttk.Frame(root, padding=10)
         help_frame.pack()
@@ -328,11 +339,11 @@ class Game():
     game_loop()
     """
 
-    def __init__(self, client, radio):
+    def __init__(self, client, radio, board_size):
         """Initialize the game"""
         pygame.init()
         self.camera = (500, 500)
-        self.board = (1000, 1000)
+        self.board = (board_size['right'], board_size['down'])
         self.client = client
         self.running = True
         self.radio = radio
@@ -641,9 +652,11 @@ def main():
     client.input_addr()
     if not client.connect():
         return
-
+    board_size = client.get_board_size()
+    if not board_size:
+        return
     radio = MusicPlayer(resource_path("sound/snake_hunt.mp3"))
-    game = Game(client, radio)
+    game = Game(client, radio, board_size)
     PauseMenu(game)
 
     game.start()
