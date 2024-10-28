@@ -91,10 +91,13 @@ class Client():
             return False
         
     def get_board_size(self):
-        size_as_bytes = comm.receive_data(self.socket, comm.MSG_LEN)
-        length = comm.to_int(size_as_bytes)
-        game_data = pickle.loads(comm.receive_data(self.socket, length))
-        return game_data
+        try:
+            size_as_bytes = comm.receive_data(self.socket, comm.MSG_LEN)
+            length = comm.to_int(size_as_bytes)
+            game_data = pickle.loads(comm.receive_data(self.socket, length))
+            return game_data
+        except:
+            return None
 
 class PauseMenu:
     """
@@ -207,7 +210,6 @@ class PauseMenu:
         # Clear main menu widgets
         for widget in root.winfo_children():
             widget.destroy()
-
         # Create a help frame
         help_frame = ttk.Frame(root, padding=10)
         help_frame.pack()
