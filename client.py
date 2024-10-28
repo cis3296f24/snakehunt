@@ -207,9 +207,6 @@ class PauseMenu:
         -------
         None
         """
-        # Clear main menu widgets
-        for widget in root.winfo_children():
-            widget.destroy()
         # Create a help frame
         help_frame = ttk.Frame(root, padding=10)
         help_frame.pack()
@@ -219,29 +216,14 @@ class PauseMenu:
             "Welcome to the game!\n\n"
             "Instructions:\n"
             "1. Enter a display name and click 'Play' to start.\n"
-            "2. Use the Up/Down/Left/Right arrow keys to navigate the snake.\n"
+            "2. Use the Up/Down/Left/Right or W/A/S/D keys to navigate the snake.\n"
             "3. Use your computer's volume controls to turn the sound up or down.\n\n"
             "Have fun!"
         )
         ttk.Label(help_frame, text=help_text, justify='left').pack(pady=10)
 
         # Back button to return to the main menu
-        ttk.Button(help_frame, text="Back", command=self.main_menu).pack(pady=10)
-
-    def main_menu(self):
-        """
-        Restore the main menu screen.
-
-        Returns
-        -------
-        None
-        """
-        # Clear help screen widgets
-        for widget in root.winfo_children():
-            widget.destroy()
-
-        # Re-populate the main menu
-        self.populate()
+        ttk.Button(help_frame, text="Clear Help", command=help_frame.destroy).pack(pady=10)
 
     def api_call(self):
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
