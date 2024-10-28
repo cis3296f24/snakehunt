@@ -389,7 +389,7 @@ class Snake():
         """
         remains = []
         for i in range(1, len(self.body), 2):
-            pel = Pellet(RandomPellets.val_1, self.game.rows, self.game.cols, is_remains=True)
+            pel = Pellet(RandomPellets.val_1, self.game.cols, self.game.rows, is_remains=True)
             pel.setPos(self.body[i].position[0], self.body[i].position[1])
             remains.append(pel)
         return remains
