@@ -217,7 +217,16 @@ class PauseMenu:
             "Instructions:\n"
             "1. Enter a display name and click 'Play' to start.\n"
             "2. Use the Up/Down/Left/Right or W/A/S/D keys to navigate the snake.\n"
-            "3. Use your computer's volume controls to turn the sound up or down.\n\n"
+            "3. Eat pellets to grow and score points!\n"
+            "4. Pellet Values\n"
+            "  - Default:\n"
+            "\t Green: 1 point\n"
+            "\t Blue: 2 points\n"
+            "\t Red: 3 points\n"
+            "  - Extra point pellets (if active):\n"
+            "\t Purple: 5 points\n"
+            "\t Yellow: 10 points\n"
+            "5. Use your computer's volume controls to turn the sound up or down.\n\n"
             "Have fun!"
         )
         ttk.Label(help_frame, text=help_text, justify='left').pack(pady=10)
