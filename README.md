@@ -54,3 +54,24 @@ To run the executable, do the following:
 
 ## How to contribute
 Follow this project board to know the latest status of the project: [https://github.com/orgs/cis3296f22/projects/97](https://github.com/orgs/cis3296f22/projects/97)  
+
+## New Features 
+### How to see new Features
+The only way to see the new features is to follow the method detailed in the section above called "Alternate way to run"
+
+### New Feature Descriptions
+1. Game Settings Options
+
+* When starting the server, a menu in the terminal presents game setting options that allows the user to change the color of the snakes, whether or not to add extra new pellets with different values, and the size of the board. The menu tells the user what to enter to get the specific desired settings
+
+2. Help Menu
+* This menu provides information about how to play the game. It can be found on the screen asking for user input for name. It provides information such as the rules of the game and pellet values.
+
+## API Call
+The result of an api call (strava.api) can be seen on the enter name window created after entering python3 server.py, and python3 client.py. 
+
+The result is a number that represents the milage ran by a person
+
+ 
+
+
