@@ -56,7 +56,7 @@ To run the executable, do the following:
 Follow this project board to know the latest status of the project: [https://github.com/orgs/cis3296f22/projects/97](https://github.com/orgs/cis3296f22/projects/97)  
 
 ## New Features 
-### How to see new Features
+### How to Play With New Features
 The only way to see the new features is to follow the method detailed in the section above called "Alternate way to run"
 
 ### New Feature Descriptions
