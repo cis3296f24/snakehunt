@@ -65,12 +65,12 @@ The only way to see the new features is to follow the method detailed in the sec
 * When starting the server, a menu in the terminal presents game setting options that allows the user to change the color of the snakes, whether or not to add extra new pellets with different values, and the size of the board. The menu tells the user what to enter to get the specific desired settings
 
 2. Help Menu
-* This menu provides information about how to play the game. It can be found on the screen asking for user input for name. It provides information such as the rules of the game and pellet values.
+* This menu provides information about how to play the game. It can be found on the screen asking for user input for a name. It provides information such as the rules of the game and pellet values.
 
 ## API Call
 The result of an api call (strava.api) can be seen on the enter name window created after entering python3 server.py, and python3 client.py. 
 
-The result is a number that represents the milage ran by a person
+The result is a number that represents the mileage ran by a person
 
  
 
